@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <script type="text/javascript" src="jsswf.js"></script>
+
+        <script type="text/javascript">
+            window.onload = function () {
+                if (JSSWF.version && JSSWF.version[0] >= 9) {
+                    var options = {
+                        attrs: {
+                            width: 793,
+                            height: 170
+                        }
+                    };
+
+                    JSSWF.embedFlash(
+                        'container',
+                        'http://www.adobe.com/swf/software/flash/about/flash_about_793x170.swf',
+                        options
+                    );
+                }
+            };
+        </script>
+    </head>
+
+    <body>
+        <div id="container"></div>
+    </body>
+</html>
