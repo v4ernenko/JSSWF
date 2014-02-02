@@ -1,7 +1,7 @@
 /**
  * @overview Yet another tool for embedding Flash application.
  * @license MIT
- * @version 1.1.1
+ * @version 1.2.1
  * @author Vadim Chernenko
  * @see {@link https://github.com/v4ernenko/JSSWF|JSSWF source code repository}
  */
