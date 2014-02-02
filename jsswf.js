@@ -1,34 +1,19 @@
-/*
-    JSSWF 1.0.0
+/**
+ * @overview Yet another tool for embedding Flash application.
+ * @license MIT
+ * @version 1.1.1
+ * @author Vadim Chernenko
+ * @see {@link https://github.com/v4ernenko/JSSWF|JSSWF source code repository}
+ */
 
-    Yet another tool for embedding Flash application
-
-    Released under the MIT License (http://www.opensource.org/licenses/mit-license.php)
-
-    Usage:
-
-    if (JSSWF.version && JSSWF.version[0] >= 9) {
-        var options = {
-                vars: {
-                    someVar: 'someValue'
-                },
-
-                attrs: {
-                    width: 250,
-                    height: 100
-                },
-
-                params: {
-                    allowScriptAccess: 'always'
-                }
-            };
-
-        var flashObject = JSSWF.embedFlash('containerId', 'http://example.com/example.swf', options);
-    }
-*/
+/**
+ * @namespace JSSWF
+ */
 
 var JSSWF = (function (win, doc, nav, undefined) {
     'use strict';
+
+    // Internal helper methods and variables
 
     var util = {
             toInt: function (value) {
@@ -62,19 +47,78 @@ var JSSWF = (function (win, doc, nav, undefined) {
             }
         },
 
-        type,
+        type = null,
 
         player,
 
         version = null,
 
-        nullFunc = function () {
-            return null;
+        FLASH_MIME = 'application/x-shockwave-flash';
+
+    if (
+        nav.plugins
+        &&
+        nav.plugins['Shockwave Flash']
+    ) {
+        player = nav.plugins['Shockwave Flash'];
+    } else if (
+        nav.mimeTypes
+        &&
+        nav.mimeTypes[FLASH_MIME]
+    ) {
+        player = nav.mimeTypes[FLASH_MIME].enabledPlugin;
+    }
+
+    if (player) {
+        type = 'PlugIn';
+
+        version = util.getVersion(player.description);
+    } else try {
+        type = 'ActiveX';
+
+        player = new ActiveXObject('ShockwaveFlash.ShockwaveFlash');
+
+        version = util.getVersion(player.GetVariable('$version'));
+    } catch (error) {
+        type = null;
+    }
+
+    return {
+        /**
+         * The version of the installed Flash player ([major, minor, revision]).
+         *
+         * @type {?Array.<number>}
+         * @memberof JSSWF
+         */
+
+        version: version,
+
+        /**
+         * Returns a string that indicates the type of player.
+         *
+         * @return {?string} Flash player type.
+         * @memberof JSSWF
+         */
+
+        getType: function () {
+            return type;
         },
 
-        FLASH_MIME = 'application/x-shockwave-flash',
+        /**
+         * Embeds the Flash content in an HTML page.
+         *
+         * @param {string} id
+         * @param {string} path
+         * @param {Object} [options]
+         * @return {?Object} Player DOM element.
+         * @memberof JSSWF
+         */
 
-        embedFlash = function (id, path, options) {
+        embedFlash: function (id, path, options) {
+            if (!type) {
+                return null;
+            }
+
             id = String(id);
 
             path = String(path);
@@ -137,7 +181,9 @@ var JSSWF = (function (win, doc, nav, undefined) {
                 }
             }
 
-            _vars.length && _params.push(util.buildParam('FlashVars', _vars.join('&')));
+            if (_vars.length) {
+                _params.push(util.buildParam('FlashVars', _vars.join('&')));
+            }
 
             var html = [
                 '<object ' + _attrs.join(' ') + '>',
@@ -159,43 +205,6 @@ var JSSWF = (function (win, doc, nav, undefined) {
             }
 
             return doc.getElementById(id);
-        };
-
-    if (
-        nav.plugins
-        &&
-        nav.plugins['Shockwave Flash']
-    ) {
-        player = nav.plugins['Shockwave Flash'];
-    } else if (
-        nav.mimeTypes
-        &&
-        nav.mimeTypes[FLASH_MIME]
-    ) {
-        player = nav.mimeTypes[FLASH_MIME].enabledPlugin;
-    }
-
-    if (player) {
-        type = 'PlugIn';
-
-        version = util.getVersion(player.description);
-    } else try {
-        type = 'ActiveX';
-
-        player = new ActiveXObject('ShockwaveFlash.ShockwaveFlash');
-
-        version = util.getVersion(player.GetVariable('$version'));
-    } catch (error) {
-        type = undefined;
-    }
-
-    return {
-        version: version,
-
-        getType: function () {
-            return type;
-        },
-
-        embedFlash: type ? embedFlash : nullFunc
+        }
     };
 })(window, window.document, window.navigator);
