@@ -15,7 +15,9 @@ var JSSWF = (function (win, doc, nav, undefined) {
 
     // Internal helper methods and variables
 
-    var util = {
+    var has = 'hasOwnProperty',
+
+        util = {
             toInt: function (value) {
                 return win.parseInt(value, 10) || 0;
             },
@@ -52,6 +54,19 @@ var JSSWF = (function (win, doc, nav, undefined) {
         player,
 
         version = null,
+
+        autoAttrs = {
+            id: true,
+            name: true,
+            data: true,
+            type: true,
+            classid: true    
+        },
+
+        autoParams = {
+            movie: true,
+            flashvars: true
+        },
 
         FLASH_MIME = 'application/x-shockwave-flash';
 
@@ -164,20 +179,26 @@ var JSSWF = (function (win, doc, nav, undefined) {
             }
 
             if (util.isObject(vars)) {
-                for (var name in vars) if (vars.hasOwnProperty(name)) {
-                    _vars.push(name + '=' + win.encodeURIComponent(vars[name]));
+                for (var name in vars) {
+                    if (vars[has](name)) {
+                        _vars.push(name + '=' + win.encodeURIComponent(vars[name]));
+                    }
                 }
             }
 
             if (util.isObject(attrs)) {
-                for (var name in attrs) if (attrs.hasOwnProperty(name)) {
-                    _attrs.push(name + '="' + attrs[name] + '"');
+                for (var name in attrs) {
+                    if (attrs[has](name) && !autoAttrs[has](name.toLowerCase())) {
+                        _attrs.push(name + '="' + attrs[name] + '"');
+                    }
                 }
             }
 
             if (util.isObject(params)) {
-                for (var name in params) if (params.hasOwnProperty(name)) {
-                    _params.push(util.buildParam(name, params[name]));
+                for (var name in params) {
+                    if (params[has](name) && !autoParams[has](name.toLowerCase())) {
+                        _params.push(util.buildParam(name, params[name]));
+                    }
                 }
             }
 
