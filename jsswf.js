@@ -31,6 +31,10 @@ var JSSWF = (function (win, doc, nav, undefined) {
     'use strict';
 
     var util = {
+            toInt: function (value) {
+                return win.parseInt(value, 10) || 0;
+            },
+
             isObject: function (value) {
                 return !!value && typeof value === 'object';
             },
@@ -40,9 +44,15 @@ var JSSWF = (function (win, doc, nav, undefined) {
             },
 
             getVersion: function (description) {
-                var matches = String(description).match(/[\d]+/g) || [];
+                var matches = String(description).match(/[\d]+/g) || [],
 
-                matches.length = 3;
+                    matchesLength = 3;
+
+                matches.length = matchesLength;
+
+                for (var i = 0; i < matchesLength; i++) {
+                    matches[i] = this.toInt(matches[i]);
+                }
 
                 return matches;
             },
