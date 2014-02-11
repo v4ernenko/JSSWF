@@ -21,7 +21,7 @@ if (JSSWF.version && JSSWF.version[0] >= 9) {
         }
     };
 
-    var flashObject = JSSWF.embedFlash('containerId', 'http://example.com/example.swf', options);
+    var flashObject = JSSWF.embedFlash('containerId', '/example.swf', options);
 }
 ```
 
