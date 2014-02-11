@@ -6,25 +6,25 @@
 
         <script type="text/javascript">
             window.onload = function () {
-                if (JSSWF.version && JSSWF.version[0] >= 9) {
-                    var options = {
+                var swfContainerId = 'container',
+
+                    swfPath = 'http://www.adobe.com/swf/software/flash/about/flash_about_793x170.swf',
+
+                    swfOptions = {
                         attrs: {
                             width: 793,
                             height: 170
                         }
                     };
 
-                    JSSWF.embedFlash(
-                        'container',
-                        'http://www.adobe.com/swf/software/flash/about/flash_about_793x170.swf',
-                        options
-                    );
+                if (JSSWF.version && JSSWF.version[0] >= 9) {
+                    JSSWF.embedFlash(swfContainerId, swfPath, swfOptions);
                 }
             };
         </script>
     </head>
 
     <body>
-        <div id="container"></div>
+        <div id="container">There should be flash here.</div>
     </body>
 </html>
